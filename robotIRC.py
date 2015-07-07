@@ -9,11 +9,12 @@ import ircbot
 import time
 from modules import Parler
 
+admin = ["TiWim", "Tiwim"]
 serveur = "irc.root-me.org"
-canal = "#root-me_bots"
-robNick = "jeannot2"
+canal = "#Bots_room"
+robNick = "myBot"
 port = 6667
-helloMsg = "hi!"
+helloMsg = "Hi!"  # va sur Bots_room :) et réponds au bot si tu recois le message"
 log_fileName = "bot.log"
 log_file = open(log_fileName, "w")
 
@@ -28,7 +29,7 @@ class Bot(ircbot.SingleServerIRCBot):
     def on_welcome(self, serv, ev):
         serv.join(canal)
         logs("Joined channel '" + canal + "' with nickname '" + robNick + "'")
-#        time.sleep(1)
+        # time.sleep(1)
         serv.privmsg(canal, helloMsg)
 
     def on_privmsg(self, serv, ev):
@@ -36,7 +37,7 @@ class Bot(ircbot.SingleServerIRCBot):
         message = ev.arguments()[0]
         print(auteur + " >> " + message)
 
-        if auteur == "TiWim":
+        if auteur in admin:
             serv.privmsg(canal, message)
             logs("Message '" + message + "' transfered to '" + canal + "'")
 
@@ -62,7 +63,7 @@ class Bot(ircbot.SingleServerIRCBot):
             elif "bonjour" in message:
                 logs("Received Bonjour from: '" + auteur)
                 serv.privmsg(canal, "bonjour " + auteur )
-            elif "!reload" in message and "TiWim":
+            elif "!reload" in message and auteur == "TiWim":
                 serv.privmsg(canal, "rechargement de mes facultés")
             else:
                 logs("Received '" + message + "' from: '" + auteur)
@@ -92,7 +93,7 @@ class Bot(ircbot.SingleServerIRCBot):
             elif "bonjour" in message:
                 logs("Received Bonjour from: '" + auteur)
                 serv.privmsg(canal, "bonjour " + auteur )
-            elif "!reload" in message and "TiWim":
+            elif "!reload" in message and auteur == "TiWim":
                 serv.privmsg(canal, "rechargement de mes facultés")
             else:
                 logs("Received '" + message + "' from: '" + auteur)
