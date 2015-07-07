@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
 # http://openclassrooms.com/courses/programmer-un-bot-irc-simplement-avec-ircbot
+# http://www.devshed.com/c/a/Python/IRC-on-a-Higher-Level-Concluded/
+# https://user.oc-static.com/pdf/102516-programmer-un-bot-irc-simplement-avec-ircbot.pdf
+
+
 import irclib
 import ircbot
 import time
-import sys
 from modules import Parler
 
 serveur = "irc.root-me.org"
 canal = "#root-me_bots"
 robNick = "jeannot2"
+port = 6667
 helloMsg = "hi!"
 log_fileName = "bot.log"
 log_file = open(log_fileName, "w")
@@ -20,10 +24,6 @@ def logs(message):
 
 class Bot(ircbot.SingleServerIRCBot):
 
-    def __init__(self):
-        logs("Connecting to server '" + serveur + "'")
-        ircbot.SingleServerIRCBot.__init__(self, [(serveur, 6667)],robNick,robNick)
-        logs("Connected")
 
     def on_welcome(self, serv, ev):
         serv.join(canal)
@@ -41,8 +41,10 @@ class Bot(ircbot.SingleServerIRCBot):
             logs("Message '" + message + "' transfered to '" + canal + "'")
 
             if "stop" in message:
-                self.on_close()
-
+                self.on_close(serv, canal, auteur)
+        else:
+            serv.privmsg(auteur, "bonjour, merci de m'envoyer des messages privés")
+            logs("Message '" + message + "' received and answered to '" + auteur + "'")
 
     def on_pubmsg(self, serv, ev):
         auteur = irclib.nm_to_n(ev.source())
@@ -52,7 +54,7 @@ class Bot(ircbot.SingleServerIRCBot):
         if robNick in message:
             logs("Received message '" + message + "' from '" + auteur + "' on '" + canal + "'")
             if "stop" in message:
-                self.on_close()
+                self.on_close(serv, canal, auteur)
 
             elif "apero" in message:
                 logs("Received apero order from: '" + auteur)
@@ -71,12 +73,12 @@ class Bot(ircbot.SingleServerIRCBot):
 
         #self.public(auteur, canal, message)
 
-    def on_close(self):
+    def on_close(self, serv, canal, auteur):
         serv.privmsg(canal, "ok je me casse alors!")
-        logs("Received disconnection msg from: '" + auteur)
+        logs("Received disconnection msg from: '" + auteur + "'")
         log_file.close()
         serv.disconnect()
-        sys.exit()
+        self.die()
 
     def public(self, auteur, canal, message):
         if robNick in message:
@@ -100,6 +102,9 @@ class Bot(ircbot.SingleServerIRCBot):
 
 if __name__ == "__main__":
     try:
-        Bot().start()
+        logs("Connecting to server '" + serveur + "'")
+        Bot([(serveur, port)],robNick,robNick).start()
+        #bot().start()
+        logs("Connected")
     except KeyboardInterrupt:
         print "user interruption"
