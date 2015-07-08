@@ -4,9 +4,11 @@
 # https://user.oc-static.com/pdf/102516-programmer-un-bot-irc-simplement-avec-ircbot.pdf
 
 
-import irclib
-import ircbot
+from lib import irclib
+from lib import ircbot
 import time
+import requests
+import re
 from modules import Parler
 
 admin = ["TiWim", "Tiwim"]
@@ -59,7 +61,8 @@ class Bot(ircbot.SingleServerIRCBot):
 
             elif "apero" in message:
                 logs("Received apero order from: '" + auteur)
-                serv.privmsg(canal, "pas encore implémenté :(")
+                message = apero()
+                serv.privmsg(canal, message)
             elif "bonjour" in message:
                 logs("Received Bonjour from: '" + auteur)
                 serv.privmsg(canal, "bonjour " + auteur )
@@ -89,7 +92,8 @@ class Bot(ircbot.SingleServerIRCBot):
 
             elif "apero" in message:
                 logs("Received apero order from: '" + auteur)
-                serv.privmsg(canal, "pas encore implémenté :(")
+                message = apero()
+                serv.privmsg(canal, message)
             elif "bonjour" in message:
                 logs("Received Bonjour from: '" + auteur)
                 serv.privmsg(canal, "bonjour " + auteur )
@@ -100,6 +104,15 @@ class Bot(ircbot.SingleServerIRCBot):
                 serv.privmsg(canal, "je n'ai pas compris!")
         elif "!help" in message:
             serv.privmsg(canal, "!help !reload apero")
+
+
+def apero():
+    page = "http://estcequecestbientotlapero.fr"
+    resultat = requests.get(page).text
+    regex = re.compile('<font size=5>(.*)</font>').search(resultat)
+    return regex.group(1)
+
+
 
 if __name__ == "__main__":
     try:
