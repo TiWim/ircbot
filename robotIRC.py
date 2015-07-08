@@ -20,10 +20,6 @@ helloMsg = "Hi!"  # va sur Bots_room :) et réponds au bot si tu recois le messa
 log_fileName = "bot.log"
 log_file = open(log_fileName, "w")
 
-def logs(message):
-    print time.strftime("%m-%d %H:%M:%S"), "=>", message
-    log_file.write(time.strftime("%m-%d %H:%M:%S") + " "
-            + message + "\n")
 
 class Bot(ircbot.SingleServerIRCBot):
 
@@ -58,7 +54,6 @@ class Bot(ircbot.SingleServerIRCBot):
             logs("Received message '" + message + "' from '" + auteur + "' on '" + canal + "'")
             if "stop" in message:
                 self.on_close(serv, canal, auteur)
-
             elif "apero" in message:
                 logs("Received apero order from: '" + auteur)
                 message = apero()
@@ -85,33 +80,45 @@ class Bot(ircbot.SingleServerIRCBot):
         self.die()
 
     def public(self, auteur, canal, message):
-        if robNick in message:
-            logs("Received message '" + message + "' from '" + auteur + "' on '" + canal + "'")
-            if "stop" in message:
-                self.on_close()
+        if "!apero" in message:
+            logs("Requested Apero from: '" + auteur)
+            serv.privmsg(canal, apero())
+        elif "!weekend" in message:
+            logs("Requested Weekend from: '" + auteur)
+            serv.privmsg(canal, weekend())
+        elif "!help" in message:
+            logs("Requested Help from: '" + auteur)
+            serv.privmsg(canal, "!help !reload !apero !weekend")
 
-            elif "apero" in message:
-                logs("Received apero order from: '" + auteur)
-                message = apero()
-                serv.privmsg(canal, message)
+        elif robNick in message:
+            if "stop" in message:
+                logs("Received message '" + message + "' from '" + auteur + "' on '" + canal + "'")
+                self.on_close()
             elif "bonjour" in message:
                 logs("Received Bonjour from: '" + auteur)
                 serv.privmsg(canal, "bonjour " + auteur )
-            elif "!reload" in message and auteur == "TiWim":
+            elif "!reload" in message and auteur in admin:
+                logs("Requested reload")
                 serv.privmsg(canal, "rechargement de mes facultés")
             else:
                 logs("Received '" + message + "' from: '" + auteur)
                 serv.privmsg(canal, "je n'ai pas compris!")
-        elif "!help" in message:
-            serv.privmsg(canal, "!help !reload apero")
 
+
+def logs(message):
+    print time.strftime("%m-%d %H:%M:%S"), "=>", message
+    log_file.write(time.strftime("%m-%d %H:%M:%S") + " "
+            + message + "\n")
 
 def apero():
     page = "http://estcequecestbientotlapero.fr"
     resultat = requests.get(page).text
-    regex = re.compile('<font size=5>(.*)</font>').search(resultat)
-    return regex.group(1)
+    return re.search('<font size=5>(.*)</font>', resultat).group(1)
 
+def weekend():
+    page = "http://estcequecestbientotleweekend.fr"
+    resultat = requests.get(page).text
+    return re.search('<p class="msg">(.*?)</p>', resultat, re.DOTALL).group(1).strip()
 
 
 if __name__ == "__main__":
