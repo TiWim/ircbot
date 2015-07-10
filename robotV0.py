@@ -7,11 +7,11 @@ import ircbot
 import time
 import sys
 
-server = ""
-channel = ""
-admin = ""
-robNick = ""
-helloMsg = ""
+server = "irc.root-me.org"
+channel = "Bots_room"
+admin = "TiWim"
+robNick = "jeannot3"
+helloMsg = "coucou"
 
 
 def logs(message):

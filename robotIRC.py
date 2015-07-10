@@ -129,3 +129,7 @@ if __name__ == "__main__":
         logs("Connected")
     except KeyboardInterrupt:
         print "user interruption"
+        print "closing log file and shutting down"
+        log_file.close()
+
+
