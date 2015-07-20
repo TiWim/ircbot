@@ -10,7 +10,7 @@ import sys
 server = "irc.root-me.org"
 channel = "Bots_room"
 admin = "TiWim"
-robNick = "jeannotte"
+robNick = "jeannot"
 helloMsg = "Hi!"
 
 
@@ -21,11 +21,11 @@ def logs(message):
 class Bot(ircbot.SingleServerIRCBot):
     def __init__(self):
         logs("Connecting to server '" + server + "'")
-        ircbot.SingleServerIRCBot.__init__(self, [(server, 6667)],
-                robNick, robNick)
+        ircbot.SingleServerIRCBot.__init__(self, [(server, 6667)], robNick, robNick)
         logs("Connected")
 
     def on_welcome(self, serv, ev):
+        logs("joining a channel")
         serv.join(channel)
         logs("Joined channel '" + channel + "' with nickname '" +
                 robNick + "'")
@@ -54,7 +54,7 @@ class Bot(ircbot.SingleServerIRCBot):
 
         if robNick in message:
             logs("Received message '" + message + "' from '" + author +
-                    "' on '" + channel "'")
+                    "' on '" + channel + "'")
             if "kitt!" in message:
                 serv.privmsg(channel, "Bye!")
                 serv.disconnect()
