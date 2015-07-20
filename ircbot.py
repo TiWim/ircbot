@@ -3,6 +3,7 @@
 # http://www.devshed.com/c/a/Python/IRC-on-a-Higher-Level-Concluded/
 # https://user.oc-static.com/pdf/102516-programmer-un-bot-irc-simplement-avec-ircbot.pdf
 
+# TODO move logs to modules
 
 from lib import irclib
 from lib import ircbot
@@ -26,7 +27,7 @@ class Bot(ircbot.SingleServerIRCBot):
 
     def on_welcome(self, serv, ev):
         serv.join(canal)
-        logs("Joined channel '" + canal + "' with nickname '" + robNick + "'")
+        logs("Joined channel '" + canal, robNick)
         # time.sleep(1)
         serv.privmsg(canal, helloMsg)
 
@@ -43,8 +44,8 @@ class Bot(ircbot.SingleServerIRCBot):
             #    self.on_close(serv, canal, auteur)
         else:
             public(serv, ev)
-#            serv.privmsg(auteur, "bonjour, merci de m'envoyer des messages privés")
-            logs("Message '" + message + "' received and answered to '" + auteur + "'")
+            serv.privmsg(auteur, "bonjour, merci de m'envoyer des messages privés")
+            logs("Message '" + message + "' received and answered", auteur)
 
     def on_pubmsg(self, serv, ev):
         self.public(serv, ev)
@@ -62,7 +63,7 @@ class Bot(ircbot.SingleServerIRCBot):
         message = ev.arguments()[0]
 
         if "!apero" in message:
-            logs("Requested Apero from: '" + auteur)
+            logs("Requested Apero", auteur)
             message = Mod.apero()
             print message
             try:
@@ -91,10 +92,10 @@ class Bot(ircbot.SingleServerIRCBot):
                 logs("Received '" + message + "' from: '" + auteur)
                 serv.privmsg(canal, "je n'ai pas compris!")
         else:
-            logs("Catched '" + message + "' from: '" + auteur)
+            logs(message, auteur)
 
-def logs(message):
-    print time.strftime("%m-%d %H:%M:%S"), "=>", message
+def logs(message, author=""):
+    print time.strftime("%m-%d %H:%M:%S"), author, ":", message
     log_file.write(time.strftime("%m-%d %H:%M:%S") + " "
             + message + "\n")
 
