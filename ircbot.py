@@ -63,10 +63,13 @@ class Bot(ircbot.SingleServerIRCBot):
 
         if "!apero" in message:
             logs("Requested Apero from: '" + auteur)
+            message = Mod.apero()
+            print message
             try:
-                serv.privmsg(canal, Mod.apero())
+                serv.privmsg(canal, message)
+                print "pas de pb"
             except:
-                print "erreur inconnue"
+                serv.privmsg(canal, "Je n'ai pas pu récupérer correctement l'info, mais vous pouvez la trouver sur ce site: http://estcequecestlapero.fr")
         elif "!weekend" in message:
             logs("Requested Weekend from: '" + auteur)
             serv.privmsg(canal, Mod.weekend())
