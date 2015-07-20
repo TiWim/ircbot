@@ -9,11 +9,11 @@ from lib import ircbot
 import time
 import requests
 import re
-from modules import Parler
+from modules import Parler as Mod
 
-admin = ["TiWim", "Tiwim"]
-serveur = "irc.root-me.org"
-canal = "#Bots_room"
+admin = ["TiWim"]
+serveur = "irc.freenode.org"  # irc.root-me.org"
+canal = "#tiwimchan"   #Bots_room"
 robNick = "myBot"
 port = 6667
 helloMsg = "Hi!"  # va sur Bots_room :) et réponds au bot si tu recois le message"
@@ -54,10 +54,6 @@ class Bot(ircbot.SingleServerIRCBot):
             logs("Received message '" + message + "' from '" + auteur + "' on '" + canal + "'")
             if "stop" in message:
                 self.on_close(serv, canal, auteur)
-            elif "apero" in message:
-                logs("Received apero order from: '" + auteur)
-                message = apero()
-                serv.privmsg(canal, message)
             elif "bonjour" in message:
                 logs("Received Bonjour from: '" + auteur)
                 serv.privmsg(canal, "bonjour " + auteur )
@@ -66,8 +62,16 @@ class Bot(ircbot.SingleServerIRCBot):
             else:
                 logs("Received '" + message + "' from: '" + auteur)
                 serv.privmsg(canal, "je n'ai pas compris!")
+        elif "!apero" in message:
+            logs("Received apero order from: '" + auteur)
+            message = Mod.apero()
+            serv.privmsg(canal, message)
+        elif "!weekend" in message:
+            logs("Received weekend order from: '" + auteur)
+            message = Mod.weekend()
+            serv.privmsg(canal, message)
         elif "!help" in message:
-            serv.privmsg(canal, "!help !reload apero")
+            serv.privmsg(canal, "!help !reload apero weekend")
 
 
         #self.public(auteur, canal, message)
@@ -79,30 +83,30 @@ class Bot(ircbot.SingleServerIRCBot):
         serv.disconnect()
         self.die()
 
-    def public(self, auteur, canal, message):
-        if "!apero" in message:
-            logs("Requested Apero from: '" + auteur)
-            serv.privmsg(canal, apero())
-        elif "!weekend" in message:
-            logs("Requested Weekend from: '" + auteur)
-            serv.privmsg(canal, weekend())
-        elif "!help" in message:
-            logs("Requested Help from: '" + auteur)
-            serv.privmsg(canal, "!help !reload !apero !weekend")
-
-        elif robNick in message:
-            if "stop" in message:
-                logs("Received message '" + message + "' from '" + auteur + "' on '" + canal + "'")
-                self.on_close()
-            elif "bonjour" in message:
-                logs("Received Bonjour from: '" + auteur)
-                serv.privmsg(canal, "bonjour " + auteur )
-            elif "!reload" in message and auteur in admin:
-                logs("Requested reload")
-                serv.privmsg(canal, "rechargement de mes facultés")
-            else:
-                logs("Received '" + message + "' from: '" + auteur)
-                serv.privmsg(canal, "je n'ai pas compris!")
+#    def public(self, auteur, canal, message):
+#        if "!apero" in message:
+#            logs("Requested Apero from: '" + auteur)
+#            serv.privmsg(canal, apero())
+#        elif "!weekend" in message:
+#            logs("Requested Weekend from: '" + auteur)
+#            serv.privmsg(canal, weekend())
+#        elif "!help" in message:
+#            logs("Requested Help from: '" + auteur)
+#            serv.privmsg(canal, "!help !reload !apero !weekend")
+#
+#        elif robNick in message:
+#            if "stop" in message:
+#                logs("Received message '" + message + "' from '" + auteur + "' on '" + canal + "'")
+#                self.on_close()
+#            elif "bonjour" in message:
+#                logs("Received Bonjour from: '" + auteur)
+#                serv.privmsg(canal, "bonjour " + auteur )
+#            elif "!reload" in message and auteur in admin:
+#                logs("Requested reload")
+#                serv.privmsg(canal, "rechargement de mes facultés")
+#            else:
+#                logs("Received '" + message + "' from: '" + auteur)
+#                serv.privmsg(canal, "je n'ai pas compris!")
 
 
 def logs(message):
@@ -128,7 +132,7 @@ if __name__ == "__main__":
         #bot().start()
         logs("Connected")
     except KeyboardInterrupt:
-        print "user interruption"
+        print "\ruser interruption"
         print "closing log file and shutting down"
         log_file.close()
 

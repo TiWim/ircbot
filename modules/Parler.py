@@ -1,5 +1,6 @@
 #! /usr/env/python
-
+import requests
+import re
 print "implemented: apero, weekend"
 
 
@@ -8,14 +9,12 @@ print "implemented: apero, weekend"
 def apero():
     page = "http://estcequecestbientotlapero.fr"
     resultat = requests.get(page).text
-    regex = re.compile('<font size=5>(.*)</font>').search(resultat)
-    return regex.group(1)
+    return re.search('<font size=5>(.*)</font>', resultat).group(1)
+
+
 
 def weekend():
     page = "http://estcequecestbientotleweekend.fr"
     resultat = requests.get(page).text
-    regex = re.compile('<font size=5>(.*)</font>').search(resultat)
-    return regex.group(1)
-
-
+    return re.search('<p class="msg">(.*?)</p>', resultat, re.DOTALL).group(1).strip()
 
