@@ -11,11 +11,12 @@ import time
 import requests
 import re
 from modules import Parler as Mod
+# import modules as Mod
 
-admin = ["TiWim", "Tiwim"]
+admin = ["TiWim"]
 serveur = "irc.root-me.org"
 canal = "#Bots_room"
-robNick = "miyBtBot"
+robNick = "mBot"
 port = 6667
 helloMsg = "Hi!"  # va sur Bots_room :) et réponds au bot si tu recois le message"
 log_fileName = "bot.log"
@@ -64,13 +65,12 @@ class Bot(ircbot.SingleServerIRCBot):
 
         if "!apero" in message:
             logs("Requested Apero", auteur)
-            message = Mod.apero()
-            print message
             try:
-                serv.privmsg(canal, message)
-                print "pas de pb"
+                serv.privmsg(canal, Mod.apero())
+                logs("Command answered")
             except:
                 serv.privmsg(canal, "Je n'ai pas pu récupérer correctement l'info, mais vous pouvez la trouver sur ce site: http://estcequecestlapero.fr")
+                logs("Command unsuccessful", author=auteur, info="WARN")
         elif "!weekend" in message:
             logs("Requested Weekend from: '" + auteur)
             serv.privmsg(canal, Mod.weekend())
@@ -94,8 +94,8 @@ class Bot(ircbot.SingleServerIRCBot):
         else:
             logs(message, auteur)
 
-def logs(message, author=""):
-    print time.strftime("%m-%d %H:%M:%S"), author, ":", message
+def logs(message, author="", info="info"):
+    print time.strftime("%m-%d %H:%M:%S"), info, author + ":", message
     log_file.write(time.strftime("%m-%d %H:%M:%S") + " "
             + message + "\n")
 

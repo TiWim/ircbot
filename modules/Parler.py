@@ -1,4 +1,6 @@
 #! /usr/env/python
+# coding: utf-8
+
 import requests
 import re
 try:
@@ -8,12 +10,12 @@ except:
 
 
 def apero():
-    # TODO: recuperer l'interieur de la balise h2, il y a d'autres elements
     page = "http://estcequecestbientotlapero.fr"
     resultat = BeautifulSoup(requests.get(page).text)
-    return resultat.font.string.encode('utf-8')
+    return resultat.h2.text.encode('utf-8').replace(".", ". ").strip()
 
 def weekend():
+    # TODO verify the format of this site
     page = "http://estcequecestbientotleweekend.fr"
     resultat = requests.get(page).text
     try:
