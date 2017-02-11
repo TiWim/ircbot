@@ -1,8 +1,8 @@
 [irc]
-admin = TiWim
-server = irc.root-me.org
-channel = bot
-botnick = MaisteFolace
+admin = me
+server = irc.myserv.org
+channel = mychan
+botnick = mybot
 port = 6667
 welcome_msg = welcome_msg
 password = password
