@@ -1,6 +1,7 @@
 #! /usr/env/python
 # coding: utf-8
 
+from Parler import apero, weekend
 import Parler as Mod
 from src.logutils import logs
 from src.confutils import readConf
@@ -8,33 +9,50 @@ from src.confutils import readConf
 admin = readConf('irc', 'admin')
 robNick = readConf('irc', 'botnick')
 
+def load():
+    reload(Mod)
+
+def cafe():
+    return "dis donc, tu me prends pour un esclave?"
+
+def biere():
+   return "Et un openbar, un!"
+
+def pastis(serv, auteur, canal, message):
+    serv.kick(canal, auteur, "tu me prends pour un serveur?")
+
 def public(client, serv, auteur, canal, message):
     parse = message.split(' ')
 
-    if "!apero" in message:
-        logs("Requested Apero", auteur)
+    commandes = { 
+            "!apéro" : apero,
+            "!weekend" : weekend,
+            "!café" : cafe,
+            "!bière" : biere,
+            "!pastis" : pastis,
+            }
+    if message == "!help":
+        string = ""
+        for key in commandes:
+            string += key + " "
+        serv.privmsg(canal, string.strip())
+        return
+    else:
         try:
-            serv.privmsg(canal, Mod.apero())
-            logs("Command answered")
-        except:
-            serv.privmsg(canal, "Parsing error http://estcequecestbientotlapero.fr")
-            logs("Command unsuccessful", author=auteur, info="WARN")
-    elif "!weekend" in message:
-        try:
-            logs("requested Weekend", auteur)
-            serv.privmsg(canal, Mod.weekend())
-        except:
-            logs("Failure!", info="Debug")
-            serv.privmsg(canal, "marche pas :(")
-    elif message == "!ctfs":
+            retValue = commandes[message]()
+            serv.privmsg(canal, retValue)
+        except TypeError:
+            commandes[message](serv, auteur, canal, message)
+        except Exception as e:
+            print e
+            print("failed")
+
+
+
+    if message == "!ctfs":
         liste = Mod.ctf()
         for elt in liste:
             serv.privmsg(canal, elt)
-    elif "!help" == message:
-        logs("Requested Help from: '" + auteur)
-        serv.privmsg(canal, "!help !ctf !ctfs !reload !apero !weekend !pastis")
-    elif message in "!pastis":
-        serv.kick(canal, auteur, "tu me prends pour un serveur?")
     elif "!nick" in message:
         msg = message.split(" ")
         if len(msg) >= 2:
@@ -47,10 +65,6 @@ def public(client, serv, auteur, canal, message):
             serv.privmsg(canal, Mod.score(message.split(" ")[1]))
         except:
             serv.privmsg(canal, Mod.score())
-    elif message == "!café":
-        serv.privmsg(canal, "dis donc, tu me prends pour un esclave?")
-    elif message == "!biere":
-        serv.privmsg(canal, "Et un openbar, un!")
     elif message == "!op":
         serv.mode(canal, "+o TiWim")
     elif robNick in message:
@@ -68,7 +82,6 @@ def public(client, serv, auteur, canal, message):
             logs("Received '" + message + "' from: '" + auteur)
     else:
         parse = message.strip().split(' ')
-        print parse
         if parse[0] in ['!score','!s','!last','!lastflag', '!chall', '!challenges']:
             if len(parse) >= 2:
                 serv.privmsg("BotRSS", message)

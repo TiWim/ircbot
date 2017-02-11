@@ -9,7 +9,10 @@ from random import randint
 
 def get(page):
     value = Popen("curl {}".format(page), stdout=PIPE, shell=True).communicate()[0]
-    value = value.encode("utf-8")
+    try:
+        value = value.encode("utf-8")
+    except:
+        pass
     return value
 
 try:
@@ -22,7 +25,7 @@ def apero():
     take the content of the website and print it on the chan
     """
     page = "http://estcequecestbientotlapero.fr"
-    resultat = BeautifulSoup(requests.get(page).text, "lxml")
+    resultat = BeautifulSoup(get(page), "lxml")
     return resultat.h2.text.encode('utf-8').replace(".", ". ").strip()
 
 def choosechall(nick):
@@ -53,7 +56,8 @@ def weekend():
     """
     page = "http://estcequecestbientotleweekend.fr"
     resultat = get(page)
-    return re.search(ur'<p class="msg">(.*?)</p>', resultat, re.DOTALL).group(1).strip()
+    res = re.search(ur'<p class="msg">(.*?)</p>', resultat, re.DOTALL).group(1).strip()
+    return res.replace("&#039;","'")
 
 
 def score(team='Tontons'):

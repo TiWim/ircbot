@@ -16,7 +16,6 @@ helloMsg = readConf("irc", "welcome_msg")
 robNick = readConf("irc", "botnick")
 
 def getAuthor(source):
-    print(source)
     return source.split('!')[0]
 
 
@@ -58,6 +57,7 @@ class Bot(ircbot.SingleServerIRCBot):
         print message
         if "!reload" in message and author in admin:
             reload(Interact)
+            Interact.load()
             serv.privmsg(channel, "I g0t m0r3 P0w4!")
         else:
             Interact.public(self, serv, author, channel, message)
