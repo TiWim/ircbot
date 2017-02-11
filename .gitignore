@@ -7,6 +7,8 @@ __pycache__/
 
 # personal
 *.swp
+settings.cfg
+settings.bak
 # lib/
 
 # Distribution / packaging

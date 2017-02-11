@@ -57,7 +57,7 @@ def public(client, serv, auteur, canal, message):
         if "stop" in message:
             if auteur in admin:
                 logs("Received message '" + message + "' from '" + auteur + "' on '" + canal + "'")
-                client.on_close(serv, canal, auteur)
+                client.die("A bientôt")
             else:
                 serv.privmsg(canal, "Méchant " + auteur + " tu voulais me faire partir?")
                 logs("sent stop signal!", auteur, "\33[01;31mWARN\33[0m")

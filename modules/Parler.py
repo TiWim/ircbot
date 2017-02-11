@@ -1,16 +1,21 @@
 #! /usr/env/python
 # coding: utf-8
-import sys, traceback
-import requests
+
+from sys import stdout
+from traceback import print_exc
+from subprocess import Popen, PIPE
 import re
-import string
 from random import randint
+
+def get(page):
+    value = Popen("curl {}".format(page), stdout=PIPE, shell=True).communicate()[0]
+    value = value.encode("utf-8")
+    return value
 
 try:
     from bs4 import BeautifulSoup
 except:
     print 'Vous devez installer le paquet python-bs4'
-
 
 def apero():
     """
@@ -26,7 +31,7 @@ def choosechall(nick):
     p = re.compile(ur'class="rouge".*?href="(.*?)".*?"(.*?)".*?;(.*?)<')
 
     page = "http://www.root-me.org/" + nick + "?inc=score&lang=fr"
-    resultat = requests.get(page).text.encode('utf-8')
+    resultat = get(page)
     result = ""
     try:
         liste = re.findall(p, resultat)
@@ -47,7 +52,7 @@ def weekend():
     take the content of the website and print it on the chan
     """
     page = "http://estcequecestbientotleweekend.fr"
-    resultat = requests.get(page).text.encode('utf-8')
+    resultat = get(page)
     return re.search(ur'<p class="msg">(.*?)</p>', resultat, re.DOTALL).group(1).strip()
 
 
@@ -59,7 +64,7 @@ def score(team='Tontons'):
     try:
         page = "https://school.fluxfingers.net/scoreboard"
         p = re.compile(ur'number">(.*?)<.*>(.*?)<\/a.*number">(.*?)<\/td><\/tr>')
-        resultat = requests.get(page).content.replace("\n", "").replace(" ", "").split("<tr")
+        resultat = get(page).replace("\n", "").replace(" ", "").split("<tr")
         for i in resultat:
             if team.lower() in i.lower():
                 a = re.search(p, i)
@@ -72,7 +77,7 @@ def score(team='Tontons'):
 
                 return string + a.group(3) + " points!"
     except:
-        traceback.print_exc(file=sys.stdout)
+        print_exc(file=stdout)
         return "failure"
 
 
@@ -83,7 +88,7 @@ def ctf():
     try:
         page = "https://ctftime.org/event/list/upcoming/rss/"
         p = re.compile(ur'<item><title>(.*?)<.*?Date(.*?)\&.*?sh;(.*?) &.*?at: (.*?)&lt.*?b&gt;(.*?)&.*?href="(.*?)"')
-        test_str = unicode(requests.get(page).content.strip(), errors='ignore').replace("\n", "")
+        test_str = get(page).strip().replace("\n", "")
         liste = re.findall(p, test_str)
         compteur = 0
         string = []
@@ -100,6 +105,6 @@ def ctf():
                 break
         return string
     except:
-        traceback.print_exc(file=sys.stdout)
+        print_exc(file=stdout)
         return "failure"
 

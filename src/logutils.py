@@ -7,5 +7,5 @@ log_file = open(log_fileName, "a")
 
 
 def logs(message, author="", info="info"):
-    print time.strftime("%m-%d %H:%M:%S"), info, author + ":", message
-    log_file.write(time.strftime("%m-%d %H:%M:%S") + " " + message + "\n")
+    print time.strftime("%y-%m-%d %H:%M:%S"), info, author + ":", message
+    log_file.write(time.strftime("%y-%m-%d %H:%M:%S") + " " + message + "\n")

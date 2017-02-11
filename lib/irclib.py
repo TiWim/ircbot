@@ -385,25 +385,15 @@ class ServerConnection(Connection):
         Arguments:
 
             server -- Server name.
-
             port -- Port number.
-
             nickname -- The nickname.
-
             password -- Password (if any).
-
             username -- The username.
-
             ircname -- The IRC name ("realname").
-
             localaddress -- Bind the connection to a specific local IP address.
-
             localport -- Bind the connection to a specific local port.
-
             ssl -- Enable support for ssl.
-
             ipv6 -- Enable support for ipv6.
-
         This function can be called to reconnect a closed connection.
 
         Returns the ServerConnection object.

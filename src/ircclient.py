@@ -5,7 +5,6 @@
 
 # TODO move logs to modules
 
-from lib import irclib
 from lib import ircbot
 from modules import Interact
 from src.confutils import readConf
@@ -15,6 +14,11 @@ from src.logutils import logs
 admin = readConf("irc", "admin")
 helloMsg = readConf("irc", "welcome_msg")
 robNick = readConf("irc", "botnick")
+
+def getAuthor(source):
+    print(source)
+    return source.split('!')[0]
+
 
 class Bot(ircbot.SingleServerIRCBot):
     channel = "#" + readConf("irc", "channel")
@@ -26,10 +30,13 @@ class Bot(ircbot.SingleServerIRCBot):
         serv.privmsg(self.channel, helloMsg)
 
     def on_kick(self, serv, ev):
+        channel = ev.target()
+        author = getAuthor(ev.source())
         serv.join(self.channel)
+        serv.privmsg(channel, "Méchant {}!".format(author))
 
     def on_privmsg(self, serv, ev):
-        author = irclib.nm_to_n(ev.source())
+        author = getAuthor(ev.source())
         message = ev.arguments()[0]
         print(author + " >> " + message)
 
@@ -45,7 +52,7 @@ class Bot(ircbot.SingleServerIRCBot):
             logs("Message '" + message + "' received and answered", author, "\33[01;31mmsg\33[0m")
 
     def on_pubmsg(self, serv, ev):
-        author = irclib.nm_to_n(ev.source())
+        author = getAuthor(ev.source())
         channel = ev.target()
         message = ev.arguments()[0]
         print message
@@ -55,10 +62,8 @@ class Bot(ircbot.SingleServerIRCBot):
         else:
             Interact.public(self, serv, author, channel, message)
 
-#    def on_close(self, serv, author):
-#        serv.privmsg(self.channel, "ok je me casse alors!")
-#        logs("Received disconnection msg from: '" + author + "'")
-#        log_file.close()
-#        serv.disconnect()
-#        self.die()
+    def on_close(self, serv, author):
+        #serv.privmsg(self.channel, "ok je me casse alors!")
+        #logs("Received disconnection msg from: '" + author + "'")
+        self.die()
 
