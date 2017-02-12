@@ -1,10 +1,11 @@
 #! /usr/env/python
 # coding: utf-8
 
-from Parler import apero, weekend
+from Parler import *
 import Parler as Mod
 from src.logutils import logs
 from src.confutils import readConf
+from itertools import izip_longest
 
 admin = readConf('irc', 'admin')
 robNick = readConf('irc', 'botnick')
@@ -21,6 +22,9 @@ def biere():
 def pastis(serv, auteur, canal, message):
     serv.kick(canal, auteur, "tu me prends pour un serveur?")
 
+def op(serv, auteur, canal, message):
+    serv.mode(canal, "+o TiWim")
+
 def public(client, serv, auteur, canal, message):
     parse = message.split(' ')
 
@@ -30,10 +34,16 @@ def public(client, serv, auteur, canal, message):
             "!café" : cafe,
             "!bière" : biere,
             "!pastis" : pastis,
+            "!op" : op,
             }
+    commandes_arg = {
+            "!choosechall" : choosechall,
+            }
+
     if message == "!help":
         string = ""
-        for key in commandes:
+        # TODO
+        for key in commands:  # commandes_arg:
             string += key + " "
         serv.privmsg(canal, string.strip())
         return
@@ -42,10 +52,16 @@ def public(client, serv, auteur, canal, message):
             retValue = commandes[message]()
             serv.privmsg(canal, retValue)
         except TypeError:
+            """ Commandes ayant besoin de parametres """
             commandes[message](serv, auteur, canal, message)
-        except Exception as e:
-            print e
-            print("failed")
+        except KeyError:
+            ret = commandes_arg[parse[0]](serv, auteur, canal, message)
+            if ret:
+                serv.privmsg(canal, ret)
+
+        #except Exception as e:
+        #    print e
+        #    print("failed")
 
 
 
@@ -65,8 +81,6 @@ def public(client, serv, auteur, canal, message):
             serv.privmsg(canal, Mod.score(message.split(" ")[1]))
         except:
             serv.privmsg(canal, Mod.score())
-    elif message == "!op":
-        serv.mode(canal, "+o TiWim")
     elif robNick in message:
         if "stop" in message:
             if auteur in admin:
@@ -88,11 +102,11 @@ def public(client, serv, auteur, canal, message):
                 serv.privmsg("BotInfo", message)
             else:
                 serv.privmsg("BotInfo", parse[0] + " " + auteur)
-        elif "!choosechall" == parse[0]:
-            nick = auteur
-            if len(parse) >= 2:
-                nick = parse[1]
-            serv.privmsg(canal, Mod.choosechall(nick))
+    #    elif "!choosechall" == parse[0]:
+    #        nick = auteur
+    #        if len(parse) >= 2:
+    #            nick = parse[1]
+    #        serv.privmsg(canal, choosechall(serv ,nick))
         elif len(parse) == 3 and parse[0] == "kick" and parse[2] == "please":
             serv.privmsg(canal, "Yes Master!")
             if parse[1] in admin:

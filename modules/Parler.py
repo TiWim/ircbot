@@ -28,12 +28,16 @@ def apero():
     resultat = BeautifulSoup(get(page), "lxml")
     return resultat.h2.text.encode('utf-8').replace(".", ". ").strip()
 
-def choosechall(nick):
+def choosechall(serv, nick, canal, message):
+#    parse = message.split(" ")
+#    if len(parse) == 2:
+#        nick = parse[1]
+#        print nick
     if nick == "ghozt":
         nick = "Ghozt-30087"
     p = re.compile(ur'class="rouge".*?href="(.*?)".*?"(.*?)".*?;(.*?)<')
 
-    page = "http://www.root-me.org/" + nick + "?inc=score&lang=fr"
+    page = "https://www.root-me.org/" + nick + "?inc=score&lang=fr"
     resultat = get(page)
     result = ""
     try:
@@ -42,7 +46,11 @@ def choosechall(nick):
         if size != 0:
             random = randint(0, size - 1)
             print random
-            result = liste[random][2] + " (" + liste[random][1] + ") Lien: http://www.root-me.org/" + liste[random][0]
+            string = "{} ({}) Lien: http://www.root-me.org/{}"
+            result = string.format(liste[random][2], liste[random][1], liste[random][0])
+            
+            for elt in liste:
+                serv.privmsg(nick, string.format(elt[2], elt[1], elt[0]))
         else:
             result = "No more challenges availables"
     except:
