@@ -48,8 +48,8 @@ class SingleServerIRCBot(SimpleIRCClient):
 
         Arguments:
 
-            server_list -- A list of tuples (server, port, password=None) that
-                           defines which servers the bot should try to
+            server_list -- A list of tuples (server, port, password=None, ssl=False) 
+                           that defines which servers the bot should try to
                            connect to.
 
             nickname -- The bot's nickname.

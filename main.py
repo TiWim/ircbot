@@ -15,6 +15,7 @@ robNick = readConf("irc", "botnick")
 port = int(readConf("irc", "port"))
 helloMsg = readConf("irc", "welcome_msg")
 password = readConf("irc", "password")
+ssl = readConf("irc", "ssl")
 
 # Bot( [tuple of servers], nick, real_name)
 # tuple of servers = (server, port, password=None, ssl=False)
@@ -24,7 +25,7 @@ if __name__ == "__main__":
 
     try:
         logs("Connecting to server '" + server + "'")
-        bot = Bot([(server, port, password, False)], robNick, robNick)
+        bot = Bot([(server, port, password, ssl)], robNick, robNick)
         bot.start()
     except KeyboardInterrupt:
         print "\ruser interuption, closing bot"

@@ -8,7 +8,7 @@ import re
 from random import randint
 
 def get(page):
-    value = Popen("curl {}".format(page), stdout=PIPE, shell=True).communicate()[0]
+    value = Popen("curl {}".format(page), stdout=PIPE, stderr=PIPE, shell=True).communicate()[0]
     try:
         value = value.encode("utf-8")
     except:
@@ -48,9 +48,6 @@ def choosechall(serv, nick, canal, message):
             print random
             string = "{} ({}) Lien: http://www.root-me.org/{}"
             result = string.format(liste[random][2], liste[random][1], liste[random][0])
-            
-            for elt in liste:
-                serv.privmsg(nick, string.format(elt[2], elt[1], elt[0]))
         else:
             result = "No more challenges availables"
     except:

@@ -8,7 +8,9 @@ __pycache__/
 # personal
 *.swp
 settings.cfg
+*.cfg
 settings.bak
+modules/challs.py
 # lib/
 
 # Distribution / packaging
